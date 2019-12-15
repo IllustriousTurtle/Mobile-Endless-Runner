@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using TMPro;
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
@@ -10,35 +12,23 @@ public class PlayerController : MonoBehaviour
 {
 
 	[SerializeField]
-	float gravityY = Physics.gravity.y;
+	float yGravity = Physics.gravity.y;
 
 	Rigidbody2D playerRB;
 	Animator playerAnimator;
 
 	bool isGrounded;
-
-	[SerializeField]
-	Vector2 groundedOverlapScale;
-	[SerializeField]
-	Vector2 groundOverlapOffset;
-
 	bool isMoving;
-
-	//[SerializeField]
-	//float maxUpwardsVelocity = 10.0f;
 
 	[SerializeField]
 	float jumpForce;
 
 	[SerializeField]
-	float maxJumpHeight;
-	[SerializeField]
 	float jumpMultiplier;
 	[SerializeField]
 	float fallMultiplier;
 
-	[HideInInspector]
-	public int playerScore;
+	float playerXPosition;
 
 	private void OnValidate()
 	{
@@ -51,44 +41,54 @@ public class PlayerController : MonoBehaviour
 		playerRB = GetComponent<Rigidbody2D>();
 		playerAnimator = GetComponent<Animator>();
 
-		//Lock rotation to stop player falling
+		//Lock rotation to stop player rolling
 		playerRB.constraints = RigidbodyConstraints2D.FreezeRotation;
-		gravityY = Physics2D.gravity.y;
+		yGravity = Physics2D.gravity.y;
+		playerXPosition = transform.position.x;
 	}
 
 	private void Update()
 	{
-		isGrounded = CheckGrounded();
-		isMoving = !isGrounded;
+		Jump();
+		UpdateAnimationStates();
 
-		//Debugging otherwise use touch inputs
-		if (Application.isEditor)
+		transform.position = new Vector3(playerXPosition, transform.position.y);
+	}
+
+	void Jump()
+	{
+		if (isGrounded)
 		{
-			if (isGrounded)
+			if (Input.GetMouseButtonDown(0) || (Application.isMobilePlatform && Input.GetTouch(0).phase == TouchPhase.Began))
 			{
-				if (Input.GetMouseButtonDown(0))
-				{
-					playerRB.velocity += Vector2.up * jumpForce;
-				}
+				playerRB.velocity += Vector2.up * jumpForce;
 			}
 		}
 
+		//Apply downwards force for arc
 		if (playerRB.velocity.y < 0)
 		{
-			playerRB.velocity += Vector2.up * gravityY * fallMultiplier * Time.deltaTime;
+			playerRB.velocity += Vector2.up * yGravity * fallMultiplier * Time.deltaTime;
 		}
-		else if (playerRB.velocity.y > 0 && !Input.GetMouseButton(0))
+		else if (playerRB.velocity.y > 0 && (!Input.GetMouseButton(0) || (Application.isMobilePlatform && Input.GetTouch(0).phase == TouchPhase.Ended)))
 		{
-			playerRB.velocity += Vector2.up * gravityY * jumpMultiplier * Time.deltaTime;
+			playerRB.velocity += Vector2.up * yGravity * jumpMultiplier * Time.deltaTime;
 		}
+
 	}
 
-	private void FixedUpdate()
+	void UpdateAnimationStates()
 	{
 		isGrounded = CheckGrounded();
-		isMoving = !isGrounded;
+		isMoving = isGrounded;
+
+		playerAnimator.SetBool("isMoving", isMoving);
+		playerAnimator.SetBool("isGrounded", isGrounded);
 	}
 
+	/// <summary>
+	/// Checks if player is grounded for jumping
+	/// </summary>
 	bool CheckGrounded()
 	{
 		if (Physics2D.Raycast(transform.position, -transform.up, 1.5f))
@@ -96,5 +96,10 @@ public class PlayerController : MonoBehaviour
 			return true;
 		}
 		return false;
+	}
+
+	private void OnDestroy()
+	{
+		CanvasManager.Instance.PlayerDied(ScoreManager.Instance.playerScore);
 	}
 }

@@ -31,12 +31,12 @@ public class HazardGenerator : MonoBehaviour
 
 		if (generalEnemies.Length > 0)
 		{
-			generalEnemies[Random.Range(0, generalEnemies.Length - 1)].SetActive(true);
+			generalEnemies[Random.Range(0, generalEnemies.Length)].SetActive(true);
 		}
 
 		if (generalHazards.Length > 0)
 		{
-			generalHazards[Random.Range(0, generalHazards.Length - 1)].SetActive(true);
+			generalHazards[Random.Range(0, generalHazards.Length)].SetActive(true);
 		}
 
 
@@ -45,7 +45,7 @@ public class HazardGenerator : MonoBehaviour
 		{
 			if (hazardToggledEnemies.Length > 0)
 			{
-				hazardToggledEnemies[Random.Range(0, hazardToggledEnemies.Length - 1)].SetActive(true);
+				hazardToggledEnemies[Random.Range(0, hazardToggledEnemies.Length)].SetActive(true);
 			}
 		}
 		else

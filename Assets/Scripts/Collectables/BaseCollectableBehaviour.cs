@@ -11,6 +11,7 @@ public class BaseCollectableBehaviour : MonoBehaviour
 {
 
 	[SerializeField] int scoreWorth;
+	[SerializeField] GameObject collectEffect;
 
 	private void OnValidate()
 	{
@@ -21,12 +22,25 @@ public class BaseCollectableBehaviour : MonoBehaviour
 			GetComponent<Rigidbody2D>().isKinematic = true;
 	}
 
-	private void OnTriggerEnter(Collider other)
+	//Increase players score, instantiate pickup effect and make pickup invisible
+	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if(other.GetComponent<PlayerController>() != null)
+		if (collision.GetComponent<PlayerController>() != null)
 		{
-			
+			ScoreManager.Instance.playerScore += scoreWorth;
+			GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0);
+
+			Instantiate(collectEffect, transform);
+			AudioManager.Instance.CollectablePickup();
+
+			StartCoroutine(SpawnParticle());
 		}
 	}
 
+	//Destroy pickup
+	IEnumerator SpawnParticle()
+	{
+		yield return new WaitForSeconds(0.10f);
+		Destroy(gameObject);
+	}
 }
