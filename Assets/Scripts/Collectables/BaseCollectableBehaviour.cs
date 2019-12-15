@@ -10,21 +10,23 @@ using UnityEngine;
 public class BaseCollectableBehaviour : MonoBehaviour
 {
 
+	[SerializeField] int scoreWorth;
+
 	private void OnValidate()
 	{
 		//Sets Intractable Items up for Player overlapping.
 		if (!GetComponent<BoxCollider2D>().isTrigger)
 			GetComponent<BoxCollider2D>().isTrigger = true;
-
+		if (!GetComponent<Rigidbody2D>().isKinematic)
+			GetComponent<Rigidbody2D>().isKinematic = true;
 	}
 
-	void Start()
+	private void OnTriggerEnter(Collider other)
 	{
-
+		if(other.GetComponent<PlayerController>() != null)
+		{
+			
+		}
 	}
 
-	void Update()
-	{
-
-	}
 }
