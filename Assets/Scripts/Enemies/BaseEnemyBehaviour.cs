@@ -7,7 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class BaseEnemyBehaviour : MonoBehaviour
 {
-
+	//Kills player on overlap and slows environment to a stop
+	//or removes overlapping enemies
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.GetComponent<PlayerController>() != null)
@@ -25,13 +26,5 @@ public class BaseEnemyBehaviour : MonoBehaviour
 				collision.transform.position = new Vector3(0, -15, 0);
 			}
 		}
-
-		Debug.Log(collision.name);
-	}
-
-	private void OnDrawGizmos()
-	{
-		Gizmos.color = new Color(1, 0, 0, 0.3f);
-		Gizmos.DrawCube(transform.position, Vector3.one);
 	}
 }

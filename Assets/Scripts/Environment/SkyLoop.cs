@@ -30,6 +30,7 @@ public class SkyLoop : MonoBehaviour
 			movementSpeed = Mathf.Lerp(movementSpeed, 0, 5 * Time.deltaTime);
 		}
 
+		//Swap sky positions based on distance from camera edge
 		if (skyOne.transform.position.x < respawnTriggerPosition && skyOne.transform.position.x > respawnTriggerPosition - 1)
 		{
 			skyTwo.transform.position = new Vector3(spawnOffset, skyTwo.transform.position.y);

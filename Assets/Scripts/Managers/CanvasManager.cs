@@ -36,14 +36,45 @@ public class CanvasManager : MonoBehaviour
 	[SerializeField]
 	TextMeshProUGUI playerGemScore;
 	[SerializeField]
+	TextMeshProUGUI playerHighScore;
+	[SerializeField]
 	Canvas deathCanvas;
 	[SerializeField]
 	Canvas playCanvas;
+
+	//Toggles Game Over and Score canvas
 	public void PlayerDied(int playerScore)
 	{
-		deathCanvas.gameObject.SetActive(true);
-		playCanvas.gameObject.SetActive(false);
+		ScoreManager.Instance.LoadScore();
+		if (deathCanvas != null)
+		{
+			deathCanvas.gameObject.SetActive(true);
+		}
+
+		if (playCanvas != null)
+		{
+			playCanvas.gameObject.SetActive(false);
+		}
+
 		playerGemScore.text = "You Collected " + playerScore.ToString() + " Gems!";
+
+		if (ScoreManager.Instance.highScore < ScoreManager.Instance.playerScore)
+		{
+			if (ScoreManager.Instance.highScore <= 0)
+			{
+				playerHighScore.text = "Previous Best: " + 0;
+			}
+			else
+			{
+				playerHighScore.text = "Previous Best: " + playerScore;
+			}
+
+			ScoreManager.Instance.SaveScore();
+		}
+		else
+		{
+			playerHighScore.text = "Current Best: " + playerScore;
+		}
 	}
 
 	public void Button_Retry()

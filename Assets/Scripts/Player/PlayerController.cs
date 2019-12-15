@@ -86,9 +86,7 @@ public class PlayerController : MonoBehaviour
 		playerAnimator.SetBool("isGrounded", isGrounded);
 	}
 
-	/// <summary>
-	/// Checks if player is grounded for jumping
-	/// </summary>
+	// Checks if player is grounded for jumping
 	bool CheckGrounded()
 	{
 		if (Physics2D.Raycast(transform.position, -transform.up, 1.5f))

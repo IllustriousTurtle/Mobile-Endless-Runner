@@ -46,7 +46,7 @@ public class GroundLoop : MonoBehaviour
 	{
 		if (!canMove)
 		{
-			//Slows camera down on player death
+			//Slows camera to a stop on player death
 			if (movementSpeed > 0.1f)
 			{
 				movementSpeed = Mathf.Lerp(movementSpeed, 0, 2.5f * Time.deltaTime);
@@ -57,6 +57,7 @@ public class GroundLoop : MonoBehaviour
 			}
 		}
 
+		//Check ground piece positions and move the other to front of row if near end of current ground.
 		if (groundPiece.transform.position.x < respawnTriggerPosition && groundPiece.transform.position.x > respawnTriggerPosition - 1)
 		{
 			groundPieceTwo.transform.position = new Vector3(spawnOffset, groundPieceTwo.transform.position.y);
@@ -73,7 +74,8 @@ public class GroundLoop : MonoBehaviour
 		groundPiece.transform.position -= (Vector3)Vector2.right * movementSpeed;
 		groundPieceTwo.transform.position -= (Vector3)Vector2.right * movementSpeed;
 
-		if (movementSpeed < maxMovementSpeed)
+		//Increase player speed over fixed time
+		if (movementSpeed < maxMovementSpeed && canMove)
 		{
 			movementSpeed += movementSpeedIncrease * Time.fixedDeltaTime;
 		}
@@ -86,7 +88,7 @@ public class GroundLoop : MonoBehaviour
 		RemoveGeneratedHazards(enemyFrogs, new Vector2(0, -15));
 		RemoveGeneratedHazards(hazards, new Vector2(0, -15));
 
-		//Make sure we're moving fast enough to clear certain objects otherwise just spawn enemies. (Covers difficulty curve as well)
+		//Make sure we're moving fast enough to clear certain objects otherwise just spawn enemies.
 		if (movementSpeed > maxMovementSpeed * 0.5f)
 		{
 			GameObject hazard = hazards[Random.Range(0, hazards.Length)];
@@ -96,12 +98,12 @@ public class GroundLoop : MonoBehaviour
 		}
 		else
 		{
+			//Run loop to spawn multiple enemies. May cause overlapping enemies
 			GameObject activeEnemy;
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 3; i++)
 			{
 				if (Random.Range(0f, 1f) > 0.25f)
 				{
-
 					activeEnemy = enemyEagles[Random.Range(0, enemyEagles.Length)];
 					if (activeEnemy != null)
 					{
@@ -124,6 +126,7 @@ public class GroundLoop : MonoBehaviour
 		}
 	}
 
+	//Move all objects off screen
 	void RemoveGeneratedHazards(GameObject[] hazards, Vector2 offset)
 	{
 		foreach (GameObject hazard in hazards)

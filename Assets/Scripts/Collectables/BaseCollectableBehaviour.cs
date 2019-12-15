@@ -7,15 +7,15 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 
+//Pickups for player interactions.
 public class BaseCollectableBehaviour : MonoBehaviour
 {
-
 	[SerializeField] int scoreWorth;
 	[SerializeField] GameObject collectEffect;
 
 	private void OnValidate()
 	{
-		//Sets Intractable Items up for Player overlapping.
+		//Sets Intractable Items up for Player overlapping and disables gravity on them.
 		if (!GetComponent<BoxCollider2D>().isTrigger)
 			GetComponent<BoxCollider2D>().isTrigger = true;
 		if (!GetComponent<Rigidbody2D>().isKinematic)
